@@ -41,6 +41,15 @@ async function run() {
        app.patch('/users',async(req,res)=>{
        const user=req.body;
        console.log(user);
+       const filter={email:user.email};
+       const updateDoc={
+        $set : {
+            lastLogIn:user.lastLogIn,
+        }
+       }
+       const result=await userCollection.updateOne(filter,updateDoc);
+       res.send(result);
+
        })
        //Creat User
        app.post('/users',async(req,res)=>{
