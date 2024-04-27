@@ -28,7 +28,27 @@ async function run() {
         // Connect the client to the server	(optional starting in v4.7)
         await client.connect();
 
-       
+        const userCollection=client.db('CraftDb').collection('user');
+
+       //======User Related Apis
+       //get user
+       app.get('/users',async(req,res)=>{
+        const cursor=userCollection.find();
+        const users=await cursor.toArray();
+        res.send(users)
+       })
+       //Pathch a user
+       app.patch('/users',async(req,res)=>{
+       const user=req.body;
+       console.log(user);
+       })
+       //Creat User
+       app.post('/users',async(req,res)=>{
+        const newUser=req.body;
+        //console.log(newUser);
+        const result=await userCollection.insertOne(newUser);
+        res.send(result);
+       })
        
 
         // Send a ping to confirm a successful connection
