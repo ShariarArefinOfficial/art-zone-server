@@ -29,6 +29,67 @@ async function run() {
         await client.connect();
 
         const userCollection=client.db('CraftDb').collection('user');
+        const craftCollection=client.db('CraftDb').collection('craft');
+
+        //=== craft Related Apis
+        app.delete('/craft/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) }
+            const result = await craftCollection.deleteOne(query);
+            res.send(result);
+        })
+        app.get('/craft/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) }
+            const result = await craftCollection.findOne(query);
+            res.send(result);
+        })
+        app.put('/craft/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: new ObjectId(id) }
+            const options = { upsert: true };
+            const updatedCraft = req.body;
+
+            const craft = {
+                $set: {
+                    // name: updatedCoffee.name,
+                    // category: updatedCoffee.quantity,
+                    // supplier: updatedCoffee.supplier,
+                    // taste: updatedCoffee.taste,
+                    // category: updatedCoffee.category,
+                    // details: updatedCoffee.details,
+                    // photo: updatedCoffee.photo
+                    name:updatedCraft.name,
+                    category:updatedCraft.category,
+                    subCategory:updatedCraft.subCategory,
+                    price:updatedCraft.price,
+                    rating:updatedCraft.rating,     
+                    description:updatedCraft.description,
+                    customization:updatedCraft.customization,
+                    time:updatedCraft.time,
+                    username:updatedCraft.username,
+                    email:updatedCraft.email,
+                    stock:updatedCraft.stock,
+                    photo:updatedCraft.photo
+                }
+            }
+
+            const result = await craftCollection.updateOne(filter, craft, options);
+            res.send(result);
+        })
+
+        app.get('/crafts',async (req, res) => {
+            const cursor = craftCollection.find();
+            const result=await cursor.toArray();
+            res.send(result);
+          }) 
+
+        app.post('/crafts',async(req,res)=>{
+            const newCraft=req.body;
+            //console.log(newCraft);
+            const result = await craftCollection.insertOne(newCraft);
+            res.send(result);
+        })
 
        //======User Related Apis
        //get user
